@@ -37,7 +37,7 @@
 
 use <./lib/fillets.scad>;
 
-case = "drivebay";            // "drivebay", "standalone", "vertical"
+case = "drivebay";            // "drivebay", "standalone", "vertical", "projection"
 pcb_enable = true;
 //length = 145;
 bat_layout = "2P_staggered";  // "straight", "staggered", "2P_staggered"
@@ -93,6 +93,12 @@ if(case == "vertical") {
             translate([0,(145-length)/2,0]) openups_pcb(bat_layout, bat_type);
         }
         translate([0,0,0]) openups_top(length, top_standoff);
+    }
+}
+if(case == "projection") {
+    length = 145;
+    projection(cut = true) translate([0,0,-11]) rotate([0,0,0]){    
+        translate([0,(145-length)/2,0]) openups_pcb(bat_layout, bat_type);
     }
 }
 
