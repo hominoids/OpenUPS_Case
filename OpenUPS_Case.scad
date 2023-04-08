@@ -97,7 +97,7 @@ if(case == "vertical") {
 }
 if(case == "projection") {
     length = 145;
-    projection(cut = true) translate([0,0,-11]) rotate([0,0,0]){    
+    projection(cut = true) translate([0,0,1]) rotate([0,0,0]){    
         translate([0,(145-length)/2,0]) openups_pcb(bat_layout, bat_type);
     }
 }
@@ -259,11 +259,15 @@ module openups(length=145, bat_layout, bat_type, bottom_standoff, pcb_standoff, 
 //        color("dimgrey") translate([-1,-1+(145-length),3.75]) cube([23,10,10]);
         // front i2c
         color("dimgrey") translate([45.5,140,8.5]) rotate([270,0,0]) slot(3.5,9.5,6);
-        color("grey") translate([45.5,143.5,8.5]) rotate([270,0,0]) slot(5.5,9.5,6);
+        if(case != "drivebay") {
+            color("grey") translate([45.5,143.5,8.5]) rotate([270,0,0]) slot(5.5,9.5,6);
+        }
 //        color("dimgrey") translate([43.875,140,6.75]) cube([12.75,10,3.5]);
         // front usb-c
         color("dimgrey") translate([64,140,8]) rotate([270,0,0]) slot(4,6,6);
-        color("grey") translate([63.75,143.5,8]) rotate([270,0,0]) slot(8,6,6);
+        if(case != "drivebay") {
+            color("grey") translate([63.75,143.5,8]) rotate([270,0,0]) slot(8,6,6);
+        }
     }
     if(bat_layout == "staggered") {
         color("dimgrey") translate([pcb_position[0]+10,pcb_position[1]+30,0]) 
@@ -462,8 +466,8 @@ module openups_pcb(bat_layout, bat_type) {
         linear_extrude(height = .5) text("+12V - +24V", size=2);
 
     // fan 1
-    translate([pcb_position[0]+pcbsize[0]-5,pcb_position[1]+22,pcb_position[2]+pcbsize[2]+3]) 
-        rotate([180,0,0]) import("lib/2304-5211-TG.stl");
+    translate([pcb_position[0]+pcbsize[0]-8,pcb_position[1]+22,pcb_position[2]+pcbsize[2]+3]) 
+        rotate([180,0,0]) import("lib/22053031.stl");
     color("black") translate([pcb_position[0]+pcbsize[0]-12,pcb_position[1]+15,pcb_position[2]+pcbsize[2]]) 
         rotate([0,0,0]) linear_extrude(height = .5) text("FAN 1", size=2);
 //    translate([pcb_position[0]+78,pcb_position[1]+7,pcb_position[2]+pcbsize[2]-2]) rotate([90,180,0]) jst_xh(4);
@@ -471,9 +475,9 @@ module openups_pcb(bat_layout, bat_type) {
 //        rotate([0,0,0]) linear_extrude(height = .5) text("FAN 1", size=2);
 
     // front fan2
-    translate([pcb_position[0]+pcbsize[0]-13,pcb_position[1]+pcbsize[1]-15,pcb_position[2]+pcbsize[2]+3]) 
-        rotate([180,0,180]) import("lib/2304-5211-TG.stl");
-    color("black") translate([pcb_position[0]+pcbsize[0]-6,pcb_position[1]+pcbsize[1]-1,pcb_position[2]+pcbsize[2]]) 
+    translate([pcb_position[0]+pcbsize[0]-8,pcb_position[1]+pcbsize[1]-13,pcb_position[2]+pcbsize[2]+3]) 
+        rotate([180,0,180]) import("lib/22053031.stl");
+    color("black") translate([pcb_position[0]+pcbsize[0]-4,pcb_position[1]+pcbsize[1]-1,pcb_position[2]+pcbsize[2]]) 
         rotate([0,0,180]) linear_extrude(height = .5) text("FAN 2", size=2);
   
     // +vout green terminal block
