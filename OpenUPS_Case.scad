@@ -18,11 +18,11 @@
         
     see https://github.com/hominoids/OpenUPS
     
-    openups_top(length=145)
-    openups(length=145, bat_layout, bat_type)
+    openups_top(pcbsize, pcb_position, length=145, top_height, bottom_height, top_standoff)
+    openups(pcbsize, pcb_position, length=145, bat_layout, bat_type, bottom_standoff, pcb_standoff, support_standoff)
     hdd35_ups(length=145,width=101.6)
     hdd35_ups_top(length=145,width=101.6)
-    openups_pcb(bat_layout, bat_type)
+    openups_pcb(pcbsize, pcb_position, bat_num, bat_layout, bat_type)
     battery_placement(bat_layout, bat_num, bat_space, bat_type, bat_dia, bat_len)
     battery_clip(bat_dia = 18.4)
     led(ledcolor = "red")
@@ -37,85 +37,122 @@
 
 use <./lib/fillets.scad>;
 
-case = "drivebay";            // "drivebay", "standalone", "vertical", "projection"
+case_style = "drivebay"; //["drivebay", "drivebay_tall", "standalone", "vertical", "pcb_only", "projection"]
 pcb_enable = true;
-//length = 145;
-bat_layout = "2P_staggered";  // "straight", "staggered", "2P_staggered"
+
+bat_num = 3;
+bat_layout = "3S_staggered";  // "straight", "staggered", "3S2P_staggered", 3S_staggered"
 bat_type = "21700";           // "18650", "18650_convex", "21700"
+
 /* standoffs
    [radius,height,holesize,supportsize,supportheight,sink,style,reverse,insert_e,i_dia,i_depth])
    sink 0=none, 1=countersink, 2=recessed hole, 3=nut holder, 4=blind hole
    style 0=hex shape, 1=cylinder
 */
-if(case == "drivebay") {
-//    translate([-94/2,-length/2,0]) {    
+if(case_style == "drivebay") {
+
+    pcbsize = [90,145,2];
+    pcb_position = [0,0,3];
     length = 145;
+    top_height = 17;
+    bottom_height = 12;
     top_standoff = [7,25,3.5,10,4,1,0,1,0,4.5,5];
     bottom_standoff = [7,10,3.5,10,4,4,1,0,1,4.5,5];
     pcb_standoff = [7,10,3.5,10,4,1,1,0,0,0,0];
     support_standoff = [7,10,3.5,15,3,4,1,0,0,0,0];
     
-    openups(length, bat_layout, bat_type, bottom_standoff, pcb_standoff, support_standoff);
+    openups(pcbsize, pcb_position, length, bat_layout, bat_type, bottom_standoff, pcb_standoff, support_standoff);
     // pcb placement
     if(pcb_enable == true) {
-        openups_pcb(bat_layout, bat_type);
+        openups_pcb(pcbsize, pcb_position, bat_num, bat_layout, bat_type);
     }
-    translate([0,0,0]) openups_top(length, top_standoff);
-//    color("dimgrey") translate([206,0,37]) rotate([0,180,0]) openups_top(length);
+    translate([0,0,0]) openups_top(pcbsize, pcb_position, length, top_height, bottom_height, top_standoff);
+
+}
+if(case_style == "drivebay_tall") {
+//    translate([-94/2,-length/2,0]) {    
+    pcbsize = [94,145,2];
+    pcb_position = [-2,0,10];
+    length = 145;
+    bottom_height = 12;
+    top_height = 25;
+    top_standoff = [7,25,3.5,10,4,1,0,1,0,4.5,5];
+    bottom_standoff = [7,10,3.5,10,4,4,1,0,1,4.5,5];
+    pcb_standoff = [7,10,3.5,10,4,1,1,0,0,0,0];
+    support_standoff = [7,10,3.5,15,3,4,1,0,0,0,0];
+    
+    openups(pcbsize, pcb_position, length, bat_layout, bat_type, bottom_standoff, pcb_standoff, support_standoff);
+    // pcb placement
+    if(pcb_enable == true) {
+        openups_pcb(pcbsize, pcb_position, bat_num, bat_layout, bat_type);
+    }
+    translate([0,0,0]) openups_top(pcbsize, pcb_position, length, top_height, bottom_height, top_standoff);
 //    }
 }
-if(case == "standalone") {
+if(case_style == "standalone") {
 //    translate([-94/2,-length/2,0]) {    
+    pcbsize = [94,145,2];
+    pcb_position = [-2,0,10];
     length = 153;
+    top_height = 25;
+    bottom_height = 12;
     top_standoff = [7,25,3.5,10,4,1,0,1,0,4.5,5];
     bottom_standoff = [7,10,3.5,10,4,4,1,0,1,4.5,5];
     pcb_standoff = [7,10,3.5,10,4,1,1,0,0,0,0];
     support_standoff = [7,10,3.5,15,3,4,1,0,0,0,0];
     
-    openups(length, bat_layout, bat_type, bottom_standoff, pcb_standoff, support_standoff);
+    openups(pcbsize, pcb_position, length, bat_layout, bat_type, bottom_standoff, pcb_standoff, support_standoff);
     // pcb placement
     if(pcb_enable == true) {
-        translate([0,(145-length)/2,0]) openups_pcb(bat_layout, bat_type);
+        translate([0,(145-length)/2,0]) openups_pcb(pcbsize, pcb_position, bat_num, bat_layout, bat_type);
     }
-    translate([0,0,0]) openups_top(length, top_standoff);
+    translate([0,0,0]) openups_top(pcbsize, pcb_position, length, top_height, bottom_height, top_standoff);
 }
-if(case == "vertical") {
+if(case_style == "vertical") {
     translate([0,0,96]) rotate([0,90,0]){    
+        pcbsize = [94,145,2];
+        pcb_position = [-2,0,10];
         length = 153;
+        top_height = 25;
+        bottom_height = 12;
         top_standoff = [7,25,3.5,10,4,1,0,1,0,4.5,5];
         bottom_standoff = [7,10,3.5,10,4,4,1,0,1,4.5,5];
         pcb_standoff = [7,10,3.5,10,4,1,1,0,0,0,0];
         support_standoff = [7,10,3.5,15,3,4,1,0,0,0,0];
         
-        openups(length, bat_layout, bat_type, bottom_standoff, pcb_standoff, support_standoff);
+        openups(pcbsize, pcb_position, length, bat_layout, bat_type, bottom_standoff, pcb_standoff, support_standoff);
         // pcb placement
         if(pcb_enable == true) {
-            translate([0,(145-length)/2,0]) openups_pcb(bat_layout, bat_type);
+            translate([0,(145-length)/2,0]) openups_pcb(pcbsize, pcb_position, bat_num, bat_layout, bat_type);
         }
-        translate([0,0,0]) openups_top(length, top_standoff);
+        translate([0,0,0]) openups_top(pcbsize, pcb_position, length, top_height, bottom_height, top_standoff);
     }
 }
-if(case == "projection") {
-    length = 145;
-    projection(cut = true) translate([0,0,1]) rotate([0,0,0]){    
-        translate([0,(145-length)/2,0]) openups_pcb(bat_layout, bat_type);
-    }
-}
-
-module openups_top(length=145, top_standoff) {
-
+if(case_style == "pcb_only") {
+    // pcb placement
     pcbsize = [94,145,2];
     pcb_position = [-2,0,10];
+    openups_pcb(pcbsize, pcb_position, bat_num, bat_layout, bat_type);
+}
+if(case_style == "projection") {
+    pcbsize = [94,145,2];
+    pcb_position = [-2,0,10];
+    length = 145;
+    projection(cut = true) translate([0,0,1]) rotate([0,0,0]){    
+        translate([0,(145-length)/2,0]) openups_pcb(pcbsize, pcb_position, bat_num, bat_layout, bat_type);
+    }
+}
+
+module openups_top(pcbsize, pcb_position, length=145, top_height, bottom_height, top_standoff) {
+
     wallthick = 2;
-    top_height = 25;
-    bottom_height = 12;
     height = top_height + bottom_height;
     adj = .01;
     $fn = 180;
 
 /* open ups case */
     difference() {
-        color("dimgrey") translate([-6,145-length,37]) rotate([0,180,270]) hdd35_ups_top(length);
+        color("dimgrey") translate([-6,145-length,height]) rotate([0,180,270]) hdd35_ups_top(length, 101.6, top_height);
         if(bat_layout == "staggered") {
             color("dimgrey") translate([pcb_position[0]+10,pcb_position[1]+30,-1]) 
                 cylinder(d=6.5, h=4);
@@ -126,7 +163,7 @@ module openups_top(length=145, top_standoff) {
             color("dimgrey") translate([pcb_position[0]+pcbsize[0]-4,pcb_position[1]+54,-1]) 
                 cylinder(d=6.5, h=4);
         }
-        if(bat_layout == "2P_staggered") {
+        if(bat_layout == "3S2P_staggered") {
             color("dimgrey") translate([pcb_position[0]+4,pcb_position[1]+53+(145-length)/2,height-wallthick-adj]) 
                 cylinder(d=6.5, h=4);
             color("dimgrey") translate([pcb_position[0]+4,pcb_position[1]+pcbsize[1]-53+(145-length)/2,height-wallthick-adj]) 
@@ -147,6 +184,7 @@ module openups_top(length=145, top_standoff) {
                 cylinder(d=6.5, h=4);
         }
         // end trim
+    if(bat_layout != "3S_staggered") {
         // rear fan slot
         color("dimgrey") translate([pcbsize[0]-10,3+(145-length),17-adj]) rotate([90,90,0]) slot(3,4,4);
 //        color("dimgrey") translate([pcbsize[0]-16,-adj,12-adj]) cube([10,wallthick+(adj*2),7]);
@@ -163,6 +201,29 @@ module openups_top(length=145, top_standoff) {
         color("dimgrey") translate([pcbsize[0]-60,pcbsize[1]-wallthick-adj,13-adj]) 
             rotate([270,0,0]) cylinder(d=3, h=4);
 //        color("dimgrey") translate([pcbsize[0]-71.5,pcbsize[1]-wallthick-adj,12-adj]) cube([14,wallthick+(adj*2),3]);
+        }
+    if(case_style == "drivebay" && bat_layout == "3S_staggered") {
+        // rear fan slot
+        color("dimgrey") translate([pcbsize[0]-8,3+(145-length),bottom_height+7.5]) rotate([90,90,0]) slot(3,4,4);
+//        color("dimgrey") translate([pcbsize[0]-16,-adj,12-adj]) cube([10,wallthick+(adj*2),7]);
+        // rear power jack
+        color("dimgrey") translate([76,-adj+(145-length),bottom_height-1.5]) cube([11.5,wallthick+(adj*2),4]);
+        // rear terminal blocks
+        color("dimgrey") translate([25,-adj+(145-length),bottom_height-adj]) cube([52,wallthick+(adj*2),4]);
+        // front fan slot
+        color("dimgrey") translate([pcbsize[0]-17,pcbsize[1]+adj,bottom_height-2]) rotate([90,90,0]) slot(3,4,4);
+        // led opening
+        color("dimgrey") translate([pcbsize[0]-63.5,pcbsize[1]-wallthick-adj,6]) 
+            rotate([270,0,0]) cylinder(d=3, h=4);
+        color("dimgrey") translate([pcbsize[0]-58.5,pcbsize[1]-wallthick-adj,6]) 
+            rotate([270,0,0]) cylinder(d=3, h=4);
+        color("dimgrey") translate([pcbsize[0]-53.5,pcbsize[1]-wallthick-adj,6]) 
+            rotate([270,0,0]) cylinder(d=3, h=4);
+        // front i2c
+        color("dimgrey") translate([47.5,140,bottom_height-5.5]) rotate([270,0,0]) slot(3.5,9.5,6);
+        // front usb-c
+        color("dimgrey") translate([81,142,7]) rotate([270,0,0]) slot(4,6,6);
+        }
     }
     if(bat_layout == "staggered") {
         color("dimgrey") translate([pcb_position[0]+10,pcb_position[1]+30,0]) 
@@ -174,7 +235,7 @@ module openups_top(length=145, top_standoff) {
         color("tan") translate([pcb_position[0]+pcbsize[0]-4,pcb_position[1]+54,0]) 
             standoff(bottom_standoff);
     }
-    if(bat_layout == "2P_staggered") {
+    if(bat_layout == "3S2P_staggered") {
         color("dimgrey") translate([pcb_position[0]+4,pcb_position[1]+53+(145-length)/2,height]) 
             standoff(top_standoff);
         color("dimgrey") translate([pcb_position[0]+4,pcb_position[1]+pcbsize[1]-53+(145-length)/2,height]) 
@@ -197,17 +258,16 @@ module openups_top(length=145, top_standoff) {
 }
 
 
-module openups(length=145, bat_layout, bat_type, bottom_standoff, pcb_standoff, support_standoff) {
+module openups(pcbsize, pcb_position, length=145, bat_layout, bat_type, bottom_standoff, pcb_standoff, support_standoff) {
 
-    pcbsize = [94,145,2];
-    pcb_position = [-2,0,10];
     adj = .01;
     $fn = 180;
 
 /* open ups case */
     difference() {
         color("dimgrey") translate([-6,pcbsize[1],0]) rotate([0,0,270]) hdd35_ups(length);
-        color("dimgrey") translate([pcb_position[0],pcb_position[1]+(145-length)/2,10]) slab(pcbsize, 3);
+        color("dimgrey") translate([pcb_position[0],adj+pcb_position[1]+(145-length)/2,pcb_position[2]]) 
+            slab([pcbsize[0],pcbsize[1],20], 3);
         if(bat_layout == "staggered") {
             color("dimgrey") translate([pcb_position[0]+10,pcb_position[1]+30,-1]) 
                 cylinder(d=6.5, h=4);
@@ -218,7 +278,7 @@ module openups(length=145, bat_layout, bat_type, bottom_standoff, pcb_standoff, 
             color("dimgrey") translate([pcb_position[0]+pcbsize[0]-4,pcb_position[1]+54,-1]) 
                 cylinder(d=6.5, h=4);
         }
-        if(bat_layout == "2P_staggered") {
+        if(bat_layout == "3S2P_staggered") {
             color("dimgrey") translate([pcb_position[0]+4,pcb_position[1]+53+(145-length)/2,-1]) 
                 cylinder(d=6.5, h=4);
             color("dimgrey") translate([pcb_position[0]+10,pcb_position[1]+25+(145-length)/2,-1]) 
@@ -244,29 +304,42 @@ module openups(length=145, bat_layout, bat_type, bottom_standoff, pcb_standoff, 
             color("dimgrey") translate([pcb_position[0]+pcbsize[0]-4,pcb_position[1]+54,-1]) 
                 cylinder(d=6.5, h=4);
         }
-        // power plug
-        color("dimgrey") translate([78.6,-1+(145-length), .75]) cube([10.5,14,9.5]);
-//        color("dimgrey") translate([65,-1,3.75]) cube([11.5,10,10]);
-        // terminal blocks
-        if(case == "standalone" || case == "vertical") {
-            color("dimgrey") translate([21.5,6+(145-length),-3]) cube([55.5,5,15]);
+        if(bat_layout != "3S_staggered") {
+            // power plug
+            color("dimgrey") translate([78.6,-1+(145-length), .75]) cube([10.5,14,9.5]);
+//            color("dimgrey") translate([65,-1,3.75]) cube([11.5,10,10]);
+            // terminal blocks
+            if(case_style == "standalone" || case_style == "vertical") {
+                color("dimgrey") translate([21.5,6+(145-length),-3]) cube([55.5,5,15]);
+            }
+            else {
+                color("dimgrey") translate([21.5,-1+(145-length),-3]) cube([55.5,10,15]);
+            }
+            // sata1 & sata2
+            color("dimgrey") translate([-1,-1+(145-length),3.75]) cube([78.5,10,10]);
+//            color("dimgrey") translate([-1,-1+(145-length),3.75]) cube([23,10,10]);
+            // front i2c
+            color("dimgrey") translate([45.5,140,8.5]) rotate([270,0,0]) slot(3.5,9.5,6);
+            if(case_style != "drivebay_tall") {
+                color("grey") translate([45.5,143.5,8.5]) rotate([270,0,0]) slot(5.5,9.5,6);
+            }
+//            color("dimgrey") translate([43.875,140,6.75]) cube([12.75,10,3.5]);
+            // front usb-c
+            color("dimgrey") translate([64,140,8]) rotate([270,0,0]) slot(4,6,6);
+            if(case_style != "drivebay_tall") {
+                color("grey") translate([63.75,143.5,8]) rotate([270,0,0]) slot(8,6,6);
+            }
         }
-        else {
-            color("dimgrey") translate([21.5,-1+(145-length),-3]) cube([55.5,10,15]);
-        }
-        // sata1 & sata2
-        color("dimgrey") translate([-1,-1+(145-length),3.75]) cube([78.5,10,10]);
-//        color("dimgrey") translate([-1,-1+(145-length),3.75]) cube([23,10,10]);
-        // front i2c
-        color("dimgrey") translate([45.5,140,8.5]) rotate([270,0,0]) slot(3.5,9.5,6);
-        if(case != "drivebay") {
-            color("grey") translate([45.5,143.5,8.5]) rotate([270,0,0]) slot(5.5,9.5,6);
-        }
-//        color("dimgrey") translate([43.875,140,6.75]) cube([12.75,10,3.5]);
-        // front usb-c
-        color("dimgrey") translate([64,140,8]) rotate([270,0,0]) slot(4,6,6);
-        if(case != "drivebay") {
-            color("grey") translate([63.75,143.5,8]) rotate([270,0,0]) slot(8,6,6);
+        if(bat_layout == "3S_staggered") {
+            // power plug
+            color("dimgrey") translate([77,-1+(145-length), 4]) cube([10.5,14,9.5]);
+//            color("dimgrey") translate([65,-1,3.75]) cube([11.5,10,10]);
+            // terminal blocks
+            color("dimgrey") translate([21.5,-1+(145-length),4]) cube([55.5,10,15]);
+      
+            // sata1 & sata2
+            color("dimgrey") translate([2.5,-1+(145-length),3.75]) cube([78.5,10,10]);
+//              color("dimgrey") translate([-1,-1+(145-length),3.75]) cube([23,10,10]);
         }
     }
     if(bat_layout == "staggered") {
@@ -279,7 +352,7 @@ module openups(length=145, bat_layout, bat_type, bottom_standoff, pcb_standoff, 
         color("tan") translate([pcb_position[0]+pcbsize[0]-4,pcb_position[1]+54,0]) 
             standoff(bottom_standoff);
     }
-    if(bat_layout == "2P_staggered") {
+    if(bat_layout == "3S2P_staggered") {
         color("dimgrey") translate([pcb_position[0]+4,pcb_position[1]+53+(145-length)/2,0]) 
             standoff(bottom_standoff);
         color("dimgrey") translate([pcb_position[0]+10,pcb_position[1]+25+(145-length)/2,0]) 
@@ -306,12 +379,14 @@ module openups(length=145, bat_layout, bat_type, bottom_standoff, pcb_standoff, 
             standoff(bottom_standoff);
     }
     // pcb supports
-    color("dimgrey") translate([pcb_position[0]+94/2,pcb_position[1]+32.5,0]) 
-        standoff(support_standoff);
-    color("dimgrey") translate([pcb_position[0]+94/2,pcb_position[1]+72.5,0]) 
-        standoff(support_standoff);  
-    color("dimgrey") translate([pcb_position[0]+94/2,pcb_position[1]+112.5,0]) 
-        standoff(support_standoff);
+    if(bat_layout != "3S_staggered") {
+        color("dimgrey") translate([pcb_position[0]+94/2,pcb_position[1]+32.5,0]) 
+            standoff(support_standoff);
+        color("dimgrey") translate([pcb_position[0]+94/2,pcb_position[1]+72.5,0]) 
+            standoff(support_standoff);  
+        color("dimgrey") translate([pcb_position[0]+94/2,pcb_position[1]+112.5,0]) 
+            standoff(support_standoff);
+    }
     
 }
 
@@ -320,7 +395,7 @@ module openups(length=145, bat_layout, bat_type, bottom_standoff, pcb_standoff, 
 module hdd35_ups(length=145,width=101.6) {
     
     wallthick = 3;
-    floorthick = 2;
+    floorthick = 1;
     hd35_x = length;                    // 145mm for 3.5" drive
     hd35_y = width;
     hd35_z = 12;
@@ -335,10 +410,14 @@ module hdd35_ups(length=145,width=101.6) {
                         vertical=[3,3,3,3], top=[0,0,0,0], bottom=[0,0,0,0], $fn=90);      
                 translate([(hd35_x/2),(hd35_y/2),(hd35_z/2)+floorthick])           
                     cube_fillet_inside([hd35_x-(wallthick*2),hd35_y-(wallthick*2),hd35_z], 
-                        vertical=[0,0,0,0], top=[0,0,0,0], bottom=[0,0,0,0], $fn=90);
+                        vertical=[2,2,2,2], top=[0,0,0,0], bottom=[2,2,2,2], $fn=90);
                    
                 // end trim
-                if(case == "drivebay") {
+                if(case_style == "drivebay") {
+                    translate([-adjust,4,wallthick+2]) cube([wallthick+(adjust*2),hd35_y-8,10]);
+//                    #translate([hd35_x-wallthick-adjust,6,wallthick+1]) cube([wallthick+(adjust*2),88,10]);
+                }
+                if(case_style == "drivebay_tall") {
                     translate([-adjust,4,wallthick+7]) cube([wallthick+(adjust*2),hd35_y-7,10]);
                     translate([hd35_x-wallthick-adjust,4,wallthick+7]) cube([wallthick+(adjust*2),hd35_y-7,10]);
                 }
@@ -361,8 +440,8 @@ module hdd35_ups(length=145,width=101.6) {
         translate([16,hd35_y-wallthick+adjust,7]) rotate([90,0,0])  cylinder(d=10,h=3);
         
         // bottom-side support
-        translate([wallthick,wallthick,floorthick-2]) rotate([45,0,0]) cube([hd35_x-(wallthick*2),3,3]);
-        translate([wallthick,hd35_y-wallthick+adjust,floorthick-2]) rotate([45,0,0]) cube([hd35_x-(wallthick*2),3,3]);
+//        translate([wallthick,wallthick,floorthick-2]) rotate([45,0,0]) cube([hd35_x-(wallthick*2),3,3]);
+//        translate([wallthick,hd35_y-wallthick+adjust,floorthick-2]) rotate([45,0,0]) cube([hd35_x-(wallthick*2),3,3]);
          
         }
         // side screw holes
@@ -385,11 +464,11 @@ module hdd35_ups(length=145,width=101.6) {
 
 
 /* 3.5" hd bay ups holder top*/
-module hdd35_ups_top(length=145,width=101.6) {
+module hdd35_ups_top(length=145, width=101.6, top_height) {
     
     wallthick = 2;
-    floorthick = 2;
-    height = 25;
+    floorthick = 1;
+    height = top_height;
     hd35_x = length;                    // 145mm for 3.5" drive
     hd35_y = width;
     hd35_z = 12;
@@ -412,19 +491,19 @@ module hdd35_ups_top(length=145,width=101.6) {
                     }
                 }       
             }
+            if(bat_layout == "3S_staggered") {
+                translate([length-wallthick,4,17-adjust]) cube([wallthick,94,7+adjust]);
+            }
         }
     }
 }
 
 
 /* open ups pcb */
-module openups_pcb(bat_layout, bat_type) {
+module openups_pcb(pcbsize, pcb_position, bat_num, bat_layout, bat_type) {
     
-    pcbsize = [94,145,2];
-    pcb_position = [-2,0,10];
-    bat_num = 6;
-    bat_dia = 21;
-    bat_len = 70;
+    bat_dia = bat_type=="21700" ? 21 : 18.4;
+    bat_len = bat_type=="21700" ? 70 : 65;
     bat_space = 3;
     adj = .01;
     $fn = 90;
@@ -438,7 +517,7 @@ module openups_pcb(bat_layout, bat_type) {
                 cylinder(d=3.5, h=4);
             color("tan") translate([pcb_position[0]+pcbsize[0]-4,pcb_position[1]+54,pcb_position[2]-1]) cylinder(d=3.5, h=4);
         }
-        if(bat_layout == "2P_staggered") {
+        if(bat_layout == "3S2P_staggered" || bat_layout == "3S_staggered") {
             color("tan") translate([pcb_position[0]+4,pcb_position[1]+53,pcb_position[2]-1]) cylinder(d=3.5, h=4);
             color("tan") translate([pcb_position[0]+10,pcb_position[1]+25,pcb_position[2]-1]) cylinder(d=3.5, h=4);
             color("tan") translate([pcb_position[0]+4,pcb_position[1]+pcbsize[1]-53,pcb_position[2]-1]) cylinder(d=3.5, h=4);
@@ -457,87 +536,145 @@ module openups_pcb(bat_layout, bat_type) {
             color("tan") translate([pcb_position[0]+pcbsize[0]-4,pcb_position[1]+54,pcb_position[2]-1]) cylinder(d=3.5, h=4);
         }
     }
-    /// power jack
-    color("grey") translate([pcb_position[0]+pcbsize[0]-3,pcb_position[1]+13,pcb_position[2]+pcbsize[2]+1])
-        rotate([90,180,0]) import("lib/PJ-063AH.stl");
-    color("black") translate([pcb_position[0]+81,pcb_position[1]+1,pcb_position[2]+pcbsize[2]]) 
-        linear_extrude(height = .5) text("+V IN", size=2.5);
-    color("black") translate([pcb_position[0]+78,pcb_position[1]+8,pcb_position[2]+pcbsize[2]]) 
-        linear_extrude(height = .5) text("+12V - +24V", size=2);
+    if(bat_layout == "3S_staggered") {
+        /// power jack
+        color("grey") translate([pcb_position[0]+pcbsize[0]-13,pcb_position[1]+13,pcb_position[2]+pcbsize[2]-3])
+            rotate([90,0,0]) import("lib/PJ-063AH.stl");
+        
+        // +vout green terminal block
+        color("lightgreen") translate([pcb_position[0]+71,pcb_position[1]+4,pcb_position[2]+pcbsize[2]+3]) 
+            rotate([0,0,180]) import("lib/691213710002.stl");
+        // +vout green terminal block
+        color("lightgreen") translate([pcb_position[0]+61,pcb_position[1]+4,pcb_position[2]+pcbsize[2]+3]) 
+            rotate([0,0,180]) import("lib/691213710002.stl");
+        // +12v green terminal block        
+        color("lightgreen") translate([pcb_position[0]+51,pcb_position[1]+4,pcb_position[2]+pcbsize[2]+3]) 
+            rotate([0,0,180]) import("lib/691213710002.stl");
+        // +12v green terminal block    
+        color("lightgreen") translate([pcb_position[0]+41,pcb_position[1]+4,pcb_position[2]+pcbsize[2]+3]) 
+            rotate([0,0,180]) import("lib/691213710002.stl");
+        // +5v green terminal block    
+        color("lightgreen") translate([pcb_position[0]+31,pcb_position[1]+4,pcb_position[2]+pcbsize[2]+3]) 
+            rotate([0,0,180]) import("lib/691213710002.stl");
+        
+        // sata 2
+        translate([pcb_position[0]+14.25,pcb_position[1]+7,pcb_position[2]+pcbsize[2]]) rotate([90,0,0]) jst_xh(4);
+        // sata 1
+        translate([pcb_position[0]+3,pcb_position[1]+7,pcb_position[2]+pcbsize[2]]) rotate([90,0,0]) jst_xh(4);
+        
+        //front i2c
+        translate([pcb_position[0]+46.5,pcb_position[1]+pcbsize[1]-4.25,pcb_position[2]+pcbsize[2]+3]) 
+            rotate([90,180,180]) jst_sh(4);
 
-    // fan 1
-    translate([pcb_position[0]+pcbsize[0]-8,pcb_position[1]+22,pcb_position[2]+pcbsize[2]+3]) 
-        rotate([180,0,0]) import("lib/22053031.stl");
-    color("black") translate([pcb_position[0]+pcbsize[0]-12,pcb_position[1]+15,pcb_position[2]+pcbsize[2]]) 
-        rotate([0,0,0]) linear_extrude(height = .5) text("FAN 1", size=2);
-//    translate([pcb_position[0]+78,pcb_position[1]+7,pcb_position[2]+pcbsize[2]-2]) rotate([90,180,0]) jst_xh(4);
-//    color("black") translate([pcb_position[0]+68.5,pcb_position[1]+.5,pcb_position[2]+pcbsize[2]]) 
-//        rotate([0,0,0]) linear_extrude(height = .5) text("FAN 1", size=2);
+        translate([pcb_position[0]+53,pcb_position[1]+pcbsize[1]-4.25,pcb_position[2]+pcbsize[2]+3]) 
+            rotate([90,180,180]) jst_sh(4);
+            
+        // front usb-c
+        translate([pcb_position[0]+84,pcb_position[1]+pcbsize[1]-9.5,pcb_position[2]+pcbsize[2]+2]) 
+            rotate([0,0,0]) import("lib/usb-c.stl");
+      
 
-    // front fan2
-    translate([pcb_position[0]+pcbsize[0]-8,pcb_position[1]+pcbsize[1]-13,pcb_position[2]+pcbsize[2]+3]) 
-        rotate([180,0,180]) import("lib/22053031.stl");
-    color("black") translate([pcb_position[0]+pcbsize[0]-4,pcb_position[1]+pcbsize[1]-1,pcb_position[2]+pcbsize[2]]) 
-        rotate([0,0,180]) linear_extrude(height = .5) text("FAN 2", size=2);
-  
-    // +vout green terminal block
-    color("lightgreen") translate([pcb_position[0]+73,pcb_position[1]+4,pcb_position[2]+pcbsize[2]-5]) 
-        rotate([0,180,180]) import("lib/691213710002.stl");
-    color("black") translate([pcb_position[0]+68,pcb_position[1]+5.5,pcb_position[2]+pcbsize[2]]) 
-        rotate([0,0,0]) linear_extrude(height = .5) text("+V OUT", size=2);
-    color("black") translate([pcb_position[0]+69.5,pcb_position[1]+.5,pcb_position[2]+pcbsize[2]]) 
-        rotate([0,0,0]) linear_extrude(height = .5) text("+", size=3);
-    color("black") translate([pcb_position[0]+74.5,pcb_position[1]+.5,pcb_position[2]+pcbsize[2]]) 
-        rotate([0,0,0]) linear_extrude(height = .5) text("-", size=4);
+    }
+    else {
+        /// power jack
+        color("grey") translate([pcb_position[0]+pcbsize[0]-3,pcb_position[1]+13,pcb_position[2]+pcbsize[2]+1])
+            rotate([90,180,0]) import("lib/PJ-063AH.stl");
+        color("black") translate([pcb_position[0]+81,pcb_position[1]+1,pcb_position[2]+pcbsize[2]]) 
+            linear_extrude(height = .5) text("+V IN", size=2.5);
+        color("black") translate([pcb_position[0]+78,pcb_position[1]+8,pcb_position[2]+pcbsize[2]]) 
+            linear_extrude(height = .5) text("+12V - +24V", size=2);
+        // fan 1
+        translate([pcb_position[0]+pcbsize[0]-8,pcb_position[1]+22,pcb_position[2]+pcbsize[2]+3]) 
+            rotate([180,0,0]) import("lib/22053031.stl");
+        color("black") translate([pcb_position[0]+pcbsize[0]-12,pcb_position[1]+15,pcb_position[2]+pcbsize[2]]) 
+            rotate([0,0,0]) linear_extrude(height = .5) text("FAN 1", size=2);
+    //    translate([pcb_position[0]+78,pcb_position[1]+7,pcb_position[2]+pcbsize[2]-2]) rotate([90,180,0]) jst_xh(4);
+    //    color("black") translate([pcb_position[0]+68.5,pcb_position[1]+.5,pcb_position[2]+pcbsize[2]]) 
+    //        rotate([0,0,0]) linear_extrude(height = .5) text("FAN 1", size=2);
+
+        // front fan2
+        translate([pcb_position[0]+pcbsize[0]-8,pcb_position[1]+pcbsize[1]-13,pcb_position[2]+pcbsize[2]+3]) 
+            rotate([180,0,180]) import("lib/22053031.stl");
+        color("black") translate([pcb_position[0]+pcbsize[0]-4,pcb_position[1]+pcbsize[1]-1,pcb_position[2]+pcbsize[2]]) 
+            rotate([0,0,180]) linear_extrude(height = .5) text("FAN 2", size=2);
+      
+        // +vout green terminal block
+        color("lightgreen") translate([pcb_position[0]+73,pcb_position[1]+4,pcb_position[2]+pcbsize[2]-5]) 
+            rotate([0,180,180]) import("lib/691213710002.stl");
+        color("black") translate([pcb_position[0]+68,pcb_position[1]+5.5,pcb_position[2]+pcbsize[2]]) 
+            rotate([0,0,0]) linear_extrude(height = .5) text("+V OUT", size=2);
+        color("black") translate([pcb_position[0]+69.5,pcb_position[1]+.5,pcb_position[2]+pcbsize[2]]) 
+            rotate([0,0,0]) linear_extrude(height = .5) text("+", size=3);
+        color("black") translate([pcb_position[0]+74.5,pcb_position[1]+.5,pcb_position[2]+pcbsize[2]]) 
+            rotate([0,0,0]) linear_extrude(height = .5) text("-", size=4);
+            
+        // +vout green terminal block
+        color("lightgreen") translate([pcb_position[0]+62,pcb_position[1]+4,pcb_position[2]+pcbsize[2]-5]) 
+            rotate([0,180,180]) import("lib/691213710002.stl");
+        color("black") translate([pcb_position[0]+57,pcb_position[1]+5.5,pcb_position[2]+pcbsize[2]]) 
+            rotate([0,0,0]) linear_extrude(height = .5) text("+V OUT", size=2);
+        color("black") translate([pcb_position[0]+58.5,pcb_position[1]+.5,pcb_position[2]+pcbsize[2]]) 
+            rotate([0,0,0]) linear_extrude(height = .5) text("+", size=3);
+        color("black") translate([pcb_position[0]+63.5,pcb_position[1]+.5,pcb_position[2]+pcbsize[2]]) 
+            rotate([0,0,0]) linear_extrude(height = .5) text("-", size=4);
+            
+        // +12v green terminal block        
+        color("lightgreen") translate([pcb_position[0]+51,pcb_position[1]+4,pcb_position[2]+pcbsize[2]-5]) 
+            rotate([0,180,180]) import("lib/691213710002.stl");
+        color("black") translate([pcb_position[0]+47,pcb_position[1]+5.5,pcb_position[2]+pcbsize[2]]) 
+            rotate([0,0,0]) linear_extrude(height = .5) text("+12V", size=2);
+        color("black") translate([pcb_position[0]+47.5,pcb_position[1]+.5,pcb_position[2]+pcbsize[2]]) 
+            rotate([0,0,0]) linear_extrude(height = .5) text("+", size=3);
+        color("black") translate([pcb_position[0]+52.5,pcb_position[1]+.5,pcb_position[2]+pcbsize[2]]) 
+            rotate([0,0,0]) linear_extrude(height = .5) text("-", size=4);
+            
+        // +12v green terminal block    
+        color("lightgreen") translate([pcb_position[0]+40,pcb_position[1]+4,pcb_position[2]+pcbsize[2]-5]) 
+            rotate([0,180,180]) import("lib/691213710002.stl");
+        color("black") translate([pcb_position[0]+36,pcb_position[1]+5.5,pcb_position[2]+pcbsize[2]]) 
+            rotate([0,0,0]) linear_extrude(height = .5) text("+12V", size=2);
+        color("black") translate([pcb_position[0]+37,pcb_position[1]+.5,pcb_position[2]+pcbsize[2]]) 
+            rotate([0,0,0]) linear_extrude(height = .5) text("+", size=3);
+        color("black") translate([pcb_position[0]+41.5,pcb_position[1]+.5,pcb_position[2]+pcbsize[2]]) 
+            rotate([0,0,0]) linear_extrude(height = .5) text("-", size=4);
+            
+        // +5v green terminal block    
+        color("lightgreen") translate([pcb_position[0]+29,pcb_position[1]+4,pcb_position[2]+pcbsize[2]-5]) 
+            rotate([0,180,180]) import("lib/691213710002.stl");
+        color("black") translate([pcb_position[0]+26,pcb_position[1]+5.5,pcb_position[2]+pcbsize[2]]) 
+            rotate([0,0,0]) linear_extrude(height = .5) text("+5V", size=2);
+        color("black") translate([pcb_position[0]+26,pcb_position[1]+.5,pcb_position[2]+pcbsize[2]]) 
+            rotate([0,0,0]) linear_extrude(height = .5) text("+", size=3);
+        color("black") translate([pcb_position[0]+31,pcb_position[1]+.5,pcb_position[2]+pcbsize[2]]) 
+            rotate([0,0,0]) linear_extrude(height = .5) text("-", size=4);
+            
+        // sata 2
+        translate([pcb_position[0]+23.25,pcb_position[1]+7,pcb_position[2]+pcbsize[2]-2]) rotate([90,180,0]) jst_xh(4);
+        color("black") translate([pcb_position[0]+13.5,pcb_position[1]+1,pcb_position[2]+pcbsize[2]]) 
+            rotate([0,0,0]) linear_extrude(height = .5) text("SATA 2", size=2);
+        // sata 1
+        translate([pcb_position[0]+12,pcb_position[1]+7,pcb_position[2]+pcbsize[2]-2]) rotate([90,180,0]) jst_xh(4);
+        color("black") translate([pcb_position[0]+2.5,pcb_position[1]+1,pcb_position[2]+pcbsize[2]]) 
+            rotate([0,0,0]) linear_extrude(height = .5) text("SATA 1", size=2);
+
+        //front i2c
+        translate([pcb_position[0]+46.5,pcb_position[1]+pcbsize[1]-4.25,pcb_position[2]+pcbsize[2]-2]) 
+            rotate([90,180,180]) jst_sh(4);
+        color("black") translate([pcb_position[0]+51,pcb_position[1]+pcbsize[1]-1,pcb_position[2]+pcbsize[2]]) 
+            rotate([0,0,180]) linear_extrude(height = .5) text("I2C", size=2);
+
+        translate([pcb_position[0]+53,pcb_position[1]+pcbsize[1]-4.25,pcb_position[2]+pcbsize[2]-2]) 
+            rotate([90,180,180]) jst_sh(4);
+        color("black") translate([pcb_position[0]+58,pcb_position[1]+pcbsize[1]-1,pcb_position[2]+pcbsize[2]]) 
+            rotate([0,0,180]) linear_extrude(height = .5) text("I2C", size=2);
+
+        // front usb-c
+        translate([pcb_position[0]+69,pcb_position[1]+pcbsize[1]-9.5,pcb_position[2]+pcbsize[2]-4]) 
+            rotate([0,180,0]) import("lib/usb-c.stl");
+        color("black") translate([pcb_position[0]+73,pcb_position[1]+pcbsize[1]-1,pcb_position[2]+pcbsize[2]]) 
+            rotate([0,0,180]) linear_extrude(height = .5) text("USB C", size=2);
         
-    // +vout green terminal block
-    color("lightgreen") translate([pcb_position[0]+62,pcb_position[1]+4,pcb_position[2]+pcbsize[2]-5]) 
-        rotate([0,180,180]) import("lib/691213710002.stl");
-    color("black") translate([pcb_position[0]+57,pcb_position[1]+5.5,pcb_position[2]+pcbsize[2]]) 
-        rotate([0,0,0]) linear_extrude(height = .5) text("+V OUT", size=2);
-    color("black") translate([pcb_position[0]+58.5,pcb_position[1]+.5,pcb_position[2]+pcbsize[2]]) 
-        rotate([0,0,0]) linear_extrude(height = .5) text("+", size=3);
-    color("black") translate([pcb_position[0]+63.5,pcb_position[1]+.5,pcb_position[2]+pcbsize[2]]) 
-        rotate([0,0,0]) linear_extrude(height = .5) text("-", size=4);
-        
-    // +12v green terminal block        
-    color("lightgreen") translate([pcb_position[0]+51,pcb_position[1]+4,pcb_position[2]+pcbsize[2]-5]) 
-        rotate([0,180,180]) import("lib/691213710002.stl");
-    color("black") translate([pcb_position[0]+47,pcb_position[1]+5.5,pcb_position[2]+pcbsize[2]]) 
-        rotate([0,0,0]) linear_extrude(height = .5) text("+12V", size=2);
-    color("black") translate([pcb_position[0]+47.5,pcb_position[1]+.5,pcb_position[2]+pcbsize[2]]) 
-        rotate([0,0,0]) linear_extrude(height = .5) text("+", size=3);
-    color("black") translate([pcb_position[0]+52.5,pcb_position[1]+.5,pcb_position[2]+pcbsize[2]]) 
-        rotate([0,0,0]) linear_extrude(height = .5) text("-", size=4);
-        
-    // +12v green terminal block    
-    color("lightgreen") translate([pcb_position[0]+40,pcb_position[1]+4,pcb_position[2]+pcbsize[2]-5]) 
-        rotate([0,180,180]) import("lib/691213710002.stl");
-    color("black") translate([pcb_position[0]+36,pcb_position[1]+5.5,pcb_position[2]+pcbsize[2]]) 
-        rotate([0,0,0]) linear_extrude(height = .5) text("+12V", size=2);
-    color("black") translate([pcb_position[0]+37,pcb_position[1]+.5,pcb_position[2]+pcbsize[2]]) 
-        rotate([0,0,0]) linear_extrude(height = .5) text("+", size=3);
-    color("black") translate([pcb_position[0]+41.5,pcb_position[1]+.5,pcb_position[2]+pcbsize[2]]) 
-        rotate([0,0,0]) linear_extrude(height = .5) text("-", size=4);
-        
-    // +5v green terminal block    
-    color("lightgreen") translate([pcb_position[0]+29,pcb_position[1]+4,pcb_position[2]+pcbsize[2]-5]) 
-        rotate([0,180,180]) import("lib/691213710002.stl");
-    color("black") translate([pcb_position[0]+26,pcb_position[1]+5.5,pcb_position[2]+pcbsize[2]]) 
-        rotate([0,0,0]) linear_extrude(height = .5) text("+5V", size=2);
-    color("black") translate([pcb_position[0]+26,pcb_position[1]+.5,pcb_position[2]+pcbsize[2]]) 
-        rotate([0,0,0]) linear_extrude(height = .5) text("+", size=3);
-    color("black") translate([pcb_position[0]+31,pcb_position[1]+.5,pcb_position[2]+pcbsize[2]]) 
-        rotate([0,0,0]) linear_extrude(height = .5) text("-", size=4);
-        
-    // sata 2
-    translate([pcb_position[0]+23.25,pcb_position[1]+7,pcb_position[2]+pcbsize[2]-2]) rotate([90,180,0]) jst_xh(4);
-    color("black") translate([pcb_position[0]+13.5,pcb_position[1]+1,pcb_position[2]+pcbsize[2]]) 
-        rotate([0,0,0]) linear_extrude(height = .5) text("SATA 2", size=2);
-    // sata 1
-    translate([pcb_position[0]+12,pcb_position[1]+7,pcb_position[2]+pcbsize[2]-2]) rotate([90,180,0]) jst_xh(4);
-    color("black") translate([pcb_position[0]+2.5,pcb_position[1]+1,pcb_position[2]+pcbsize[2]]) 
-        rotate([0,0,0]) linear_extrude(height = .5) text("SATA 1", size=2);
+    }
 
     // front leds
     translate([pcb_position[0]+25,pcb_position[1]+pcbsize[1]-3,pcb_position[2]+pcbsize[2]]) led();
@@ -550,23 +687,6 @@ module openups_pcb(bat_layout, bat_type) {
     color("black") translate([pcb_position[0]+38.5,pcb_position[1]+pcbsize[1]-4,pcb_position[2]+pcbsize[2]]) 
         rotate([0,0,180]) linear_extrude(height = .5) text("FULL", size=1.25);
     
-    //front i2c
-    translate([pcb_position[0]+46.5,pcb_position[1]+pcbsize[1]-4.25,pcb_position[2]+pcbsize[2]-2]) 
-        rotate([90,180,180]) jst_sh(4);
-    color("black") translate([pcb_position[0]+51,pcb_position[1]+pcbsize[1]-1,pcb_position[2]+pcbsize[2]]) 
-        rotate([0,0,180]) linear_extrude(height = .5) text("I2C", size=2);
-
-    translate([pcb_position[0]+53,pcb_position[1]+pcbsize[1]-4.25,pcb_position[2]+pcbsize[2]-2]) 
-        rotate([90,180,180]) jst_sh(4);
-    color("black") translate([pcb_position[0]+58,pcb_position[1]+pcbsize[1]-1,pcb_position[2]+pcbsize[2]]) 
-        rotate([0,0,180]) linear_extrude(height = .5) text("I2C", size=2);
-
-    // front usb-c
-    translate([pcb_position[0]+69,pcb_position[1]+pcbsize[1]-9.5,pcb_position[2]+pcbsize[2]-4]) 
-        rotate([0,180,0]) import("lib/usb-c.stl");
-    color("black") translate([pcb_position[0]+73,pcb_position[1]+pcbsize[1]-1,pcb_position[2]+pcbsize[2]]) 
-        rotate([0,0,180]) linear_extrude(height = .5) text("USB C", size=2);
-
     // batteries
     translate([pcb_position[0]+4,pcb_position[1]+2,pcb_position[2]+pcbsize[2]]) 
         battery_placement(bat_layout, bat_num, bat_space, bat_type, bat_dia, bat_len);
@@ -604,7 +724,7 @@ module battery_placement(bat_layout, bat_num, bat_space, bat_type, bat_dia, bat_
             }
         }
     }
-    if(bat_layout == "2P_staggered") {
+    if(bat_layout == "3S2P_staggered") {
         translate([bat_len,bat_dia/2,.38+(bat_dia/2)]) {
             for( b = [0:1:bat_num-1]) {
                 if(b == 0 || b == 1 || b == 4 || b == 5) {
@@ -616,6 +736,25 @@ module battery_placement(bat_layout, bat_num, bat_space, bat_type, bat_dia, bat_
                 if(b == 2 || b == 3) {
                     translate([16-bat_len,b*bat_dia+b*bat_space,1]) rotate([-90,0,270]) battery(bat_type);
                     color("dimgrey") translate([14,b*bat_dia+b*bat_space,1]) rotate([0,0,90]) battery_clip(bat_dia);
+                    color("dimgrey") translate([-bat_len+18,b*bat_dia+b*bat_space,1]) 
+                        rotate([0,0,270]) battery_clip(bat_dia);
+                }
+
+            }
+        }
+    }
+    if(bat_layout == "3S_staggered") {
+        translate([bat_len,70.5+bat_dia/2,.38+(bat_dia/2)]) {
+            for( b = [0:1:bat_num-1]) {
+                if(b == 0 || b == 2 || b == 4) {
+                    translate([0,b*bat_dia+b*bat_space,1]) rotate([-90,0,90]) battery(bat_type);
+                    color("dimgrey") translate([-2,b*bat_dia+b*bat_space,1]) rotate([0,0,90]) battery_clip(bat_dia);
+                    color("dimgrey") translate([-bat_len+2,b*bat_dia+b*bat_space,1]) 
+                        rotate([0,0,270]) battery_clip(bat_dia);
+                }
+                if(b == 1 || b == 3 || b == 5) {
+                    translate([13-bat_len,b*bat_dia+b*bat_space,1]) rotate([-90,0,270]) battery(bat_type);
+                    color("dimgrey") translate([11,b*bat_dia+b*bat_space,1]) rotate([0,0,90]) battery_clip(bat_dia);
                     color("dimgrey") translate([-bat_len+18,b*bat_dia+b*bat_space,1]) 
                         rotate([0,0,270]) battery_clip(bat_dia);
                 }
