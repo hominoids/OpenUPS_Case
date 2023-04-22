@@ -670,29 +670,29 @@ module openups_pcb(pcbsize, pcb_position, bat_num, bat_layout, bat_type) {
         translate([pcb_position[0]+3,pcb_position[1]+7,pcb_position[2]+pcbsize[2]]) rotate([90,0,0]) jst_xh(4);
         
         // i2c
-        translate([pcb_position[0]+66,pcb_position[1]+4.25,pcb_position[2]+pcbsize[2]+3]) 
-            rotate([90,180,0]) jst_sh(4);
+        translate([pcb_position[0]+61,pcb_position[1]+4.25,pcb_position[2]+pcbsize[2]-4.5]) 
+            rotate([90,0,0]) jst_sh(4);
 
-        translate([pcb_position[0]+66,pcb_position[1]+14,pcb_position[2]+pcbsize[2]+3]) 
-            rotate([90,180,0]) jst_sh(4);
+        translate([pcb_position[0]+70,pcb_position[1]+4.25,pcb_position[2]+pcbsize[2]-4.5]) 
+            rotate([90,0,0]) jst_sh(4);
             
         // front usb-c
         translate([pcb_position[0]+54,pcb_position[1]+pcbsize[1]-9.5,pcb_position[2]+pcbsize[2]+2]) 
             rotate([0,0,0]) import("lib/usb-c.stl");
       
         // fan 1
-        translate([pcb_position[0]+pcbsize[0]-18.5,pcb_position[1]+8,pcb_position[2]+pcbsize[2]+3]) 
+        translate([pcb_position[0]+pcbsize[0]-17.5,pcb_position[1]+8,pcb_position[2]+pcbsize[2]+3.25]) 
             rotate([180,0,0]) import("lib/22053031.stl");
-        color("black") translate([pcb_position[0]+pcbsize[0]-22,pcb_position[1]+1,pcb_position[2]+pcbsize[2]]) 
+        color("black") translate([pcb_position[0]+pcbsize[0]-21,pcb_position[1]+1,pcb_position[2]+pcbsize[2]]) 
             rotate([0,0,0]) linear_extrude(height = .5) text("FAN 1", size=2);
     //    translate([pcb_position[0]+78,pcb_position[1]+7,pcb_position[2]+pcbsize[2]-2]) rotate([90,180,0]) jst_xh(4);
     //    color("black") translate([pcb_position[0]+68.5,pcb_position[1]+.5,pcb_position[2]+pcbsize[2]]) 
     //        rotate([0,0,0]) linear_extrude(height = .5) text("FAN 1", size=2);
 
         // front fan2
-        translate([pcb_position[0]+8,pcb_position[1]+35,pcb_position[2]+pcbsize[2]+3]) 
+        translate([pcb_position[0]+pcbsize[0]-26.5,pcb_position[1]+8,pcb_position[2]+pcbsize[2]+3.25]) 
             rotate([180,0,0]) import("lib/22053031.stl");
-        color("black") translate([pcb_position[0]+4,pcb_position[1]+25,pcb_position[2]+pcbsize[2]]) 
+        color("black") translate([pcb_position[0]+pcbsize[0]-30,pcb_position[1]+1,pcb_position[2]+pcbsize[2]]) 
             rotate([0,0,0]) linear_extrude(height = .5) text("FAN 2", size=2);
         translate([pcb_position[0]+20,pcb_position[1]+40,pcb_position[2]+0]) heatsink("c4_oem",1.6);
     }
